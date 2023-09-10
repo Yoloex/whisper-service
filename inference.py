@@ -9,19 +9,29 @@ model = whisper.load_model("base")
 
 print("Model loaded.")
 
-# file_list = glob.glob('')
+file_list = glob.glob('test/*.m4a')
+files = []
 
-input = whisper.load_audio("test/test1.m4a")
-# input = whisper.pad_or_trim(input)
-mel = whisper.log_mel_spectrogram(input).to(model.device)
+for file in file_list:
+    input = whisper.load_audio(file)
+    files.append(input)
 
-mel = torch.unsqueeze(mel, dim=0)
+max_length = max([file.shape[0] for file in files])
+
+mel_spects = []
+
+for file in files:
+    input = whisper.pad_or_trim(file, length=max_length)
+    mel = whisper.log_mel_spectrogram(audio=input).to(model.device)
+    mel_spects.append(mel)
 
 options = whisper.DecodingOptions()
 
 start = time.time()
-results = whisper.decode(model, torch.concat([mel] * 16, dim=0), options=options)
-# results = whisper.transcribe(model=model, audio=torch.concat([mel] * 16, dim=0))
+
+inputs = torch.stack(mel_spects)
+results = whisper.decode(model, inputs, options=options)
+# results = whisper.transcribe(model=model, audio=inputs)
 end = time.time()
 
 print('Calculation time: ', end - start)
