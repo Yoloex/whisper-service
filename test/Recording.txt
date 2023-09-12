@@ -1,1 +1,6 @@
 Note that our models are only trained on less than 200 short videos. So they are still hard to be generalized to unseen subjects. The subject videos of example videos we shown are seen, which are from training dataset (Driving videos are still unseen). If you want to apply our model to new subject, please do some fine-tuning. This can be achieved by using our training code to train TS-Net on the new subject with a small learning rate. The following section shows a toy example about how to train TS-Net.
+
+Note that our mother is already trained on less than 200 shot videos. So would you still have to be generalized to the unseen subjects?
+the subject videos of example videos we shown as seen which are from training dataset.
+driving videos are still answered. If you want to apply a moderate new subject, please do some fine tuning. This can be achieved by using our training code to train TSnet on the new subject with a small learning rate.
+The following section shows a toy example of how to train TSNET
