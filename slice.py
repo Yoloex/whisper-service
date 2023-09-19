@@ -1,10 +1,7 @@
 import librosa
 import glob
 import os
-import soundfile as sf
 import numpy as np
-import matplotlib.pyplot as plt
-from librosa import display
 
 for file in glob.glob('*.wav'):
     os.system(f'del {file}')

@@ -1,3 +1,6 @@
+torch==2.0.1
 ffmpeg-python
 openai-whisper
-torch==2.0.1
+librosa==0.8.1
+numpy==1.23.5
+flask
