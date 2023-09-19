@@ -1,18 +1,17 @@
 import whisper
 import time
 import torch
-from whisper import load_audio
 
 print("Loading model ...")
 
-model = whisper.load_model("medium")
+model = whisper.load_model("base")
 batchsize = 8
 
 print("Model loaded.")
 
 def generate_transcription(inputs):
     """   Transcription generation function
-        inputs: numpy arry, a list of audio waveforms
+        inputs: numpy array, a list of audio waveforms
     """
     print('number of segments', len(inputs))
     mel_spects = []

@@ -2,7 +2,6 @@ import io
 import numpy as np
 import soundfile as sf
 import librosa
-import warnings
 from flask import Flask, request, jsonify
 from inference import generate_transcription
 
