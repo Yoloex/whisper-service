@@ -1,9 +1,11 @@
 import random
 import requests
-import json
-from flask import Flask, request, jsonify
+from flask import Flask, request
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.route('/')
 @app.route('/index')
