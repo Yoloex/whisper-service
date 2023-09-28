@@ -27,5 +27,5 @@ def generate():
         return jsonify({'status': 'accpeted', 'duration': f'{duration}'})
 
 if __name__ == '__main__':
-    app.run(port=5003, debug=True)
     print('Server 3 is listening on 5003 ...')
+    app.run(port=5003, debug=True)
