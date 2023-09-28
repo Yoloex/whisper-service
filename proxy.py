@@ -1,6 +1,6 @@
 import random
 import requests
-from flask import Flask, request, jsonify
+from flask import Flask, request
 
 app = Flask(__name__)
 
@@ -17,11 +17,7 @@ def generate():
         print(f"Redirected to Server {serverid}")
 
         data = request.get_data()
-        response = requests.post(f"http://localhost:500{serverid}/generate", data=data)
-        response = response.json()
-        print(type(response))
-        print(response, 'result')
-    return jsonify(response)
+        requests.post(f"http://localhost:500{serverid}/generate", data=data)
 
 if __name__ == '__main__':
     print("Listening on 3000 ...")
