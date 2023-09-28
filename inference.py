@@ -22,7 +22,7 @@ def generate_transcription(inputs):
 
     # mel_spects = mel_spects + [torch.zeros(size=mel_spects[0].shape).to(model.device)] * (len(mel_spects) % batchsize)
 
-    options = whisper.DecodingOptions()
+    options = whisper.DecodingOptions(fp16=False)
 
     inputs = torch.stack(mel_spects)
     
