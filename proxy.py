@@ -18,7 +18,10 @@ def generate():
 
         data = request.get_data()
         response = requests.post(f"http://localhost:500{serverid}/generate", data=data)
-    return jsonify(response.json())
+        response = response.json()
+        print(type(response))
+        print(response, 'result')
+    return jsonify(response)
 
 if __name__ == '__main__':
     print("Listening on 3000 ...")
