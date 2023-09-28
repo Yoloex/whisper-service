@@ -1,11 +1,8 @@
 import random
 import requests
-from flask import Flask, request
-from flask_cors import CORS
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
-# cors = CORS(app)
-# app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.route('/')
 @app.route('/index')
@@ -21,7 +18,7 @@ def generate():
 
         data = request.get_data()
         response = requests.post(f"http://localhost:500{serverid}/generate", data=data)
-    return response
+    return jsonify(response.json())
 
 if __name__ == '__main__':
     print("Listening on 3000 ...")
