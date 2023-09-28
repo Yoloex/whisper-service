@@ -18,6 +18,9 @@ def index():
 def generate():
     if request.method == "POST":
         serverid = random.randint(1, 5)
+
+        print(f"Redirected to Server {serverid}")
+
         data = request.get_data()
         response = requests.post(f"http://localhost:500{serverid}/generate", data=data)
     return response
