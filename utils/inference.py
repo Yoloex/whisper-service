@@ -20,8 +20,6 @@ def generate_transcription(inputs):
         mel = whisper.log_mel_spectrogram(audio=input).to(model.device)
         mel_spects.append(mel)
 
-    # mel_spects = mel_spects + [torch.zeros(size=mel_spects[0].shape).to(model.device)] * (len(mel_spects) % batchsize)
-
     options = whisper.DecodingOptions(fp16=False)
 
     inputs = torch.stack(mel_spects)
