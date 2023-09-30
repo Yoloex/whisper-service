@@ -2,18 +2,16 @@ import whisper
 import time
 import torch
 
-print("Loading model ...")
-
-model = whisper.load_model("base")
 batchsize = 8
 
-print("Model loaded.")
-
-def generate_transcription(inputs):
+def generate_transcription(inputs, model):
     """   Transcription generation function
         inputs: numpy array, a list of audio waveforms
+        model: Whisper model
     """
-    print('number of segments', len(inputs))
+
+    # Whisper only accpets 30s-long file 
+    # For that, padding and cutting is done on wave segment.
     mel_spects = []
     for input in inputs:
         input = whisper.pad_or_trim(input)
@@ -28,10 +26,10 @@ def generate_transcription(inputs):
     start = time.time()
 
     for i in range(0, len(mel_spects), batchsize):
+
         inference = whisper.decode(model, inputs[i : i + batchsize], options=options)
         results.append("\n".join([infer.text for infer in inference]))
+    
     end = time.time()
 
-    print("\n".join([result for result in results]))
-
-    return end - start
+    return end - start, "\n".join([result for result in results])
