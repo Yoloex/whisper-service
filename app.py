@@ -20,8 +20,6 @@ class TranscribeThread(Thread):
         print('Model loaded')
 
         while True:
-            print(f'{get_native_id()} is waiting ...')
-
             file = filelist.get()
 
             print(f'{get_native_id()} is processing {file}')
