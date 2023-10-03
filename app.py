@@ -1,13 +1,20 @@
-import queue
 import whisper
 import mysql.connector
+import logging
+import yaml
+import queue
+from threading import Thread
 from flask import Flask, request, jsonify
 from utils.utils import save_audio, transcribe
-from threading import Thread, get_native_id
+
+with open('cfg/log.yaml') as f:
+    log_cfg = yaml.safe_load(f.read())
+    logging.config.dictConfig(log_cfg)
 
 app = Flask(__name__)
 filelist = queue.Queue()
 results = queue.Queue()
+logger = logging.getLogger('Server')
 
 class TranscribeThread(Thread):
 
@@ -15,31 +22,28 @@ class TranscribeThread(Thread):
         Thread.__init__(self)
     
     def run(self):
-        print('Loading model ...')
-
-        model = whisper.load_model("base")
-
-        print('Model loaded')
+        try:
+            model = whisper.load_model("base")
+        except:
+            logger.warning('Failed to load model.')
 
         while True:
             file = filelist.get()
 
-            print(f'{get_native_id()} is processing {file}')
+            logger.debug(f'{file} is being processed ')
             duration, text = transcribe(file, model)
             results.put([file, text])
             
-            print(f'{get_native_id()} finished processing {file} in {duration}s')
+            logger.debug(f'{file} processing finished in {duration}s')
 
 class DatabaseThread(Thread):
     def __init__(self):
         Thread.__init__(self)
     def run(self):
         db = mysql.connector.connect(host='localhost', user='root', password='notouch1234!@#$')
-        cursor = db.cursor()
+        cursor = db.cursor(buffered=True)
 
         cursor.execute('USE test;')
-
-        print([x for x in cursor])
 
         while True:
             result = results.get()
@@ -48,16 +52,16 @@ class DatabaseThread(Thread):
             cursor.execute(sql, (None, result[0][:2], result[0][3:6], result[0][7:15], result[0][15:21], result[1]))
             db.commit()
 
-            print(f'{result[0]} saved successfully')
+            logger.debug(f'{result[0]} saved in database successfully')
 
 @app.route('/generate', methods=['POST'])
 def generate():
 
     if request.method == 'POST':
-        print('Accepted')
-        
         data = request.get_data()
         saved_file = save_audio('1', 'JHS', data)
+
+        logger.debug(f'Finished writing {saved_file}')
 
         filelist.put(saved_file)
 
@@ -75,5 +79,5 @@ if __name__ == '__main__':
     
     dbthread.start()
 
-    print('Server is listening on 5000 ...')
+    logger.info('Server is listening on 5000 ...')
     app.run(port=5000, threaded=True)
