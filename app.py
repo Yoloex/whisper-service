@@ -3,6 +3,7 @@ import mysql.connector
 import logging
 import yaml
 import queue
+import time
 from threading import Thread
 from flask import Flask, request, jsonify
 from utils.utils import save_audio, transcribe
@@ -35,6 +36,8 @@ class TranscribeThread(Thread):
             results.put([file, text])
             
             logger.debug(f'{file} processing finished in {duration}s')
+            
+            time.sleep(0.1)
 
 class DatabaseThread(Thread):
     def __init__(self):
@@ -53,6 +56,8 @@ class DatabaseThread(Thread):
             db.commit()
 
             logger.debug(f'{result[0]} saved in database successfully')
+
+            time.sleep(0.1)
 
 @app.route('/generate', methods=['POST'])
 def generate():
