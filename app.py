@@ -6,6 +6,7 @@ import queue
 import time
 import glob
 import os
+import sys
 from threading import Thread
 from flask import Flask, request, jsonify
 from utils.utils import save_audio, transcribe
@@ -29,13 +30,21 @@ class TranscribeThread(Thread):
             model = whisper.load_model("base")
         except:
             logger.warning('Failed to load model.')
+            sys.exit()
 
         while True:
             file = filelist.get()
 
             logger.debug(f'{file} is being processed ')
             duration, text = transcribe(file, model)
-            results.put([file, text])
+            results.put({
+                'filename': file,
+                'groupid': file[:2],
+                'id': file[3:6],
+                'dateid': file[7:15],
+                'timeid': file[15:21],
+                'content': text
+            })
             
             logger.debug(f'{file} processing finished in {duration}s')
             
@@ -54,11 +63,11 @@ class DatabaseThread(Thread):
             result = results.get()
             sql = """INSERT INTO calldata (idx, groupid, id, dateid, timeid, content)
                     VALUES (%s, %s, %s, %s, %s, %s)"""
-            cursor.execute(sql, (None, result[0][:2], result[0][3:6], result[0][7:15], result[0][15:21], result[1]))
+            cursor.execute(sql, (None, result['groupid'], result['id'], result['dateid'], result['timeid'], result['content']))
             db.commit()
-            os.remove(result[0])
+            os.remove(result['filename'])
             
-            logger.debug(f'{result[0]} saved in database successfully')
+            logger.debug(f"{result['filename']} saved in database successfully")
 
             time.sleep(0.1)
 
@@ -83,7 +92,7 @@ if __name__ == '__main__':
     temps = glob.glob('temp/*.wav')
 
     for tmp in temps:
-        filelist.put(tmp)
+        filelist.put(tmp[5:])
 
     for i in range(thread_num):
         newthread = TranscribeThread()

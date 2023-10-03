@@ -3,12 +3,11 @@ import numpy as np
 import soundfile as sf
 import time
 import io
-import os
 import whisper
 import torch
 
 def transcribe(input: str, model):
-    wave, sr = librosa.load(input)
+    wave, sr = librosa.load('temp/' + input)
     wave_16 = librosa.resample(wave, orig_sr=sr, target_sr=16000)
     segments = librosa.effects.split(wave_16, top_db=13, frame_length=12800, hop_length=1200, ref=np.max)
     duration, text = generate_transcription([wave_16[segment[0]:segment[1]] for segment in segments], model)
@@ -24,10 +23,10 @@ def save_audio(groupid: str, id: str, data: bytes):
     Returns:
         str: Saved file name
     """
-    now = time.strftime('%Y%m%d%H%M%S')
+    timestamp = time.strftime('%Y%m%d%H%M%S')
     wave, sr = sf.read(io.BytesIO(data), dtype='float32')
-    filename = f'temp/{groupid.zfill(2)}_{id}_{now}.wav'
-    sf.write(filename, wave, samplerate=sr)
+    filename = f'{groupid.zfill(2)}_{id}_{timestamp}.wav'
+    sf.write('temp/' + filename, wave, samplerate=sr)
     
     return filename
 
