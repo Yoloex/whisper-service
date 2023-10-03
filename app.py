@@ -4,6 +4,8 @@ import logging
 import yaml
 import queue
 import time
+import glob
+import os
 from threading import Thread
 from flask import Flask, request, jsonify
 from utils.utils import save_audio, transcribe
@@ -54,7 +56,8 @@ class DatabaseThread(Thread):
                     VALUES (%s, %s, %s, %s, %s, %s)"""
             cursor.execute(sql, (None, result[0][:2], result[0][3:6], result[0][7:15], result[0][15:21], result[1]))
             db.commit()
-
+            os.remove(result[0])
+            
             logger.debug(f'{result[0]} saved in database successfully')
 
             time.sleep(0.1)
@@ -77,6 +80,11 @@ if __name__ == '__main__':
     threads = []
     thread_num = 2
     
+    temps = glob.glob('temp/*.wav')
+
+    for tmp in temps:
+        filelist.put(tmp)
+
     for i in range(thread_num):
         newthread = TranscribeThread()
         newthread.start()

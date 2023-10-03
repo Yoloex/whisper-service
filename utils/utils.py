@@ -13,8 +13,6 @@ def transcribe(input: str, model):
     segments = librosa.effects.split(wave_16, top_db=13, frame_length=12800, hop_length=1200, ref=np.max)
     duration, text = generate_transcription([wave_16[segment[0]:segment[1]] for segment in segments], model)
     
-    os.remove(input)
-
     return duration, text
 
 def save_audio(groupid: str, id: str, data: bytes):
