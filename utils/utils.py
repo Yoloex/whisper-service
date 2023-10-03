@@ -28,7 +28,7 @@ def save_audio(groupid: str, id: str, data: bytes):
     """
     now = time.strftime('%Y%m%d%H%M%S')
     wave, sr = sf.read(io.BytesIO(data), dtype='float32')
-    filename = f'{groupid.zfill(2)}_{id}_{now}.wav'
+    filename = f'temp/{groupid.zfill(2)}_{id}_{now}.wav'
     sf.write(filename, wave, samplerate=sr)
     
     return filename
