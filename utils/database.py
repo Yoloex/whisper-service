@@ -1,7 +1,10 @@
 import mysql.connector
 import yaml
+import os
 
-with open('cfg/server.yaml') as f:
+os.chdir('..')
+
+with open('../cfg/server.yaml') as f:
     cfg = yaml.safe_load(f.read())
     db_cfg = cfg['database']
 
