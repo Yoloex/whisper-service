@@ -1,6 +1,6 @@
 import whisper
 import mysql.connector
-import logging
+import logging.config
 import yaml
 import queue
 import time
@@ -9,11 +9,15 @@ import os
 import sys
 from threading import Thread
 from flask import Flask, request, jsonify
+from getpass import getpass
 from utils.utils import save_audio, transcribe
 
 with open('cfg/log.yaml') as f:
     log_cfg = yaml.safe_load(f.read())
     logging.config.dictConfig(log_cfg)
+
+with open('cfg/server.yaml') as f:
+    server_cfg = yaml.safe_load(f.read())
 
 app = Flask(__name__)
 filelist = queue.Queue()
@@ -27,7 +31,7 @@ class TranscribeThread(Thread):
     
     def run(self):
         try:
-            model = whisper.load_model("base")
+            model = whisper.load_model(server_cfg['server']['model'])
         except:
             logger.warning('Failed to load model.')
             sys.exit()
@@ -35,7 +39,7 @@ class TranscribeThread(Thread):
         while True:
             file = filelist.get()
 
-            logger.debug(f'{file} is being processed ')
+            logger.debug(f'{file} is being processed')
             duration, text = transcribe(file, model)
             results.put({
                 'filename': file,
@@ -51,12 +55,12 @@ class TranscribeThread(Thread):
             time.sleep(0.1)
 
 class DatabaseThread(Thread):
-    def __init__(self):
+    def __init__(self, database):
         Thread.__init__(self)
+        self.database = database
     def run(self):
-        db = mysql.connector.connect(host='localhost', user='root', password='notouch1234!@#$')
-        cursor = db.cursor(buffered=True)
-
+        
+        cursor = self.database.cursor(buffered=True)
         cursor.execute('USE test;')
 
         while True:
@@ -85,9 +89,23 @@ def generate():
     return jsonify({'status': 'accepted'})
 
 if __name__ == '__main__':
-    dbthread = DatabaseThread()
+
+    connected = True
+
+    for i in range(3):
+        try:
+            password = getpass()
+            db = mysql.connector.connect(host=server_cfg['database']['host'], user=server_cfg['database']['user'], password=password)
+        except Exception as e:
+            print('Connection failed with', e)
+            connected = False
+
+    if not connected:
+        sys.exit()
+
+    dbthread = DatabaseThread(db)
     threads = []
-    thread_num = 2
+    thread_num = server_cfg['server']['thread_count']
     
     temps = glob.glob('temp/*.wav')
 
@@ -101,5 +119,5 @@ if __name__ == '__main__':
     
     dbthread.start()
 
-    logger.info('Server is listening on 5000 ...')
-    app.run(port=5000, threaded=True)
+    logger.info(f"Server is listening on {server_cfg['server']['port']} ...")
+    app.run(port=server_cfg['server']['port'], threaded=server_cfg['server']['threaded'], host=server_cfg['server']['host'])

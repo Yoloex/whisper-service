@@ -5,11 +5,16 @@ import time
 import io
 import whisper
 import torch
+import yaml
+
+with open('cfg/server.yaml') as f:
+    server_cfg = yaml.safe_load(f.read())
+    config = server_cfg['preprocessing']
 
 def transcribe(input: str, model):
     wave, sr = librosa.load('temp/' + input)
-    wave_16 = librosa.resample(wave, orig_sr=sr, target_sr=16000)
-    segments = librosa.effects.split(wave_16, top_db=13, frame_length=12800, hop_length=1200, ref=np.max)
+    wave_16 = librosa.resample(wave, orig_sr=sr, target_sr=config['resampling_rate'])
+    segments = librosa.effects.split(wave_16, top_db=config['silence_top_db'], frame_length=config['frame_length'], hop_length=config['hop_length'], ref=np.max)
     duration, text = generate_transcription([wave_16[segment[0]:segment[1]] for segment in segments], model)
     
     return duration, text
@@ -30,8 +35,6 @@ def save_audio(groupid: str, id: str, data: bytes):
     
     return filename
 
-batchsize = 8
-
 def generate_transcription(inputs, model):
     """   Transcription generation function
         inputs: numpy array, a list of audio waveforms
@@ -46,7 +49,8 @@ def generate_transcription(inputs, model):
         mel = whisper.log_mel_spectrogram(audio=input).to(model.device)
         mel_spects.append(mel)
 
-    options = whisper.DecodingOptions(fp16=False)
+    options = whisper.DecodingOptions(fp16=config['float16_decode'])
+    batchsize = config['batchsize']
 
     inputs = torch.stack(mel_spects)
     

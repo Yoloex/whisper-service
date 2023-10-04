@@ -1,0 +1,17 @@
+server:
+  port: 5000
+  host: 0.0.0.0
+  threaded: True
+  thread_count: 2
+  model: base
+database:
+  host: localhost
+  user: root
+  retry_count: 3
+preprocessing:
+  resampling_rate: 16000
+  silence_top_db: 13
+  frame_length: 12800
+  hop_length: 1200
+  batchsize: 8
+  float16_decode: False

@@ -1,6 +1,9 @@
 import mysql.connector
+import getpass
 
-mydb = mysql.connector.connect(host='localhost', user='root', password='notouch1234!@#$')
+password = getpass.getpass()
+
+mydb = mysql.connector.connect(host='localhost', user='root', password=password)
 cursor = mydb.cursor(buffered=True)
 
 found = False
