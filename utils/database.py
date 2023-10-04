@@ -21,13 +21,14 @@ if not found:
 
 cursor.execute('select database() test;')
 cursor.execute('show tables in test;')
-cursor.execute('Use test;')
 
 found = False
 
 for x in cursor:
     if x[0] == 'calldata':
         found = True
+
+cursor.execute('Use test;')
 
 if not found:
     sql = "CREATE TABLE calldata " + \
