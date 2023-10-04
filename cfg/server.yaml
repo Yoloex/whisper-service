@@ -8,7 +8,7 @@ database:
   host: localhost
   user: root
   retry_count: 3
-  password: notouch1234!@#$
+  password: Notouch1234!@#$
 preprocessing:
   resampling_rate: 16000
   silence_top_db: 13
