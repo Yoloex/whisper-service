@@ -69,7 +69,7 @@ class DatabaseThread(Thread):
                     VALUES (%s, %s, %s, %s, %s, %s)"""
             cursor.execute(sql, (None, result['groupid'], result['id'], result['dateid'], result['timeid'], result['content']))
             db.commit()
-            os.remove(result['filename'])
+            os.remove('temp/' + result['filename'])
             
             logger.debug(f"{result['filename']} saved in database successfully")
 
@@ -93,12 +93,16 @@ if __name__ == '__main__':
     connected = True
 
     for i in range(3):
-        try:
-            password = getpass()
-            db = mysql.connector.connect(host=server_cfg['database']['host'], user=server_cfg['database']['user'], password=password)
-        except Exception as e:
-            print('Connection failed with', e)
-            connected = False
+        if connected and i == 1:
+            break
+        else:
+            try:
+                password = getpass()
+                db = mysql.connector.connect(host=server_cfg['database']['host'], user=server_cfg['database']['user'], password=password)
+                connected = True
+            except Exception as e:
+                print('Connection failed with', e)
+                connected = False
 
     if not connected:
         sys.exit()
