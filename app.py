@@ -40,9 +40,9 @@ class TranscribeThread(Thread):
             file = filelist.get()
 
             logger.debug(f'{file} is being processed')
-            duration, text, success = transcribe(file, model)
+            duration, text = transcribe(file, model)
             
-            if not duration:
+            if duration != 0:
                 results.put({
                     'filename': file,
                     'groupid': file[:2],
