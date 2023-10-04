@@ -92,23 +92,7 @@ def generate():
 
 if __name__ == '__main__':
 
-    connected = True
-
-    for i in range(3):
-        if connected and i == 1:
-            break
-        else:
-            try:
-                password = getpass()
-                db = mysql.connector.connect(host=server_cfg['database']['host'], user=server_cfg['database']['user'], password=password)
-                connected = True
-            except Exception as e:
-                print('Connection failed with', e)
-                connected = False
-
-    if not connected:
-        sys.exit()
-
+    db = mysql.connector.connect(host=server_cfg['database']['host'], user=server_cfg['database']['user'], password=server_cfg['database']['password'])
     dbthread = DatabaseThread(db)
     threads = []
     thread_num = server_cfg['server']['thread_count']

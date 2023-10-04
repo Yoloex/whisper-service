@@ -1,9 +1,11 @@
 import mysql.connector
-import getpass
+import yaml
 
-password = getpass.getpass()
+with open('cfg/server.yaml') as f:
+    cfg = yaml.safe_load(f.read())
+    db_cfg = cfg['database']
 
-mydb = mysql.connector.connect(host='localhost', user='root', password=password)
+mydb = mysql.connector.connect(host=db_cfg['host'], user=db_cfg['user'], password=db_cfg['password'])
 cursor = mydb.cursor(buffered=True)
 
 found = False
