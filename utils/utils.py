@@ -15,9 +15,18 @@ def transcribe(input: str, model):
     wave, sr = librosa.load('temp/' + input)
     wave_16 = librosa.resample(wave, orig_sr=sr, target_sr=config['resampling_rate'])
     segments = librosa.effects.split(wave_16, top_db=config['silence_top_db'], frame_length=config['frame_length'], hop_length=config['hop_length'], ref=np.max)
-    duration, text = generate_transcription([wave_16[segment[0]:segment[1]] for segment in segments], model)
     
-    return duration, text
+    success = True
+    
+    try:
+        duration, text = generate_transcription([wave_16[segment[0]:segment[1]] for segment in segments], model)
+    except:
+        success = False
+    
+    if success:
+        return duration, text
+    else:
+        return 0, ''
 
 def save_audio(groupid: str, id: str, data: bytes):
     """
