@@ -12,11 +12,11 @@ from flask import Flask, request, jsonify
 from getpass import getpass
 from utils.utils import save_audio, transcribe
 
-with open('cfg/log.yaml') as f:
+with open(os.path.join(os.getcwd(), 'cfg/log.yaml')) as f:
     log_cfg = yaml.safe_load(f.read())
     logging.config.dictConfig(log_cfg)
 
-with open('cfg/server.yaml') as f:
+with open(os.path.join(os.getcwd(), 'cfg/server.yaml')) as f:
     server_cfg = yaml.safe_load(f.read())
 
 app = Flask(__name__)
