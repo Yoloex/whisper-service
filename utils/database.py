@@ -17,10 +17,11 @@ for x in cursor:
         found = True
 
 if not found:
-    cursor.execute('create test;')
+    cursor.execute('create database test;')
 
 cursor.execute('select database() test;')
 cursor.execute('show tables in test;')
+cursor.execute('Use test;')
 
 found = False
 
