@@ -12,4 +12,4 @@ for i in range(40):
         # print(logs[i][start + len('finished in '):-2])
         sum += float(logs[i][start + len('finished in '):-2])
 
-print(sum / total)
+print(sum / total, f's for {total}')
