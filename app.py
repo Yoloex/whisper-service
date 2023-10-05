@@ -9,7 +9,6 @@ import os
 import sys
 from threading import Thread
 from flask import Flask, request, jsonify
-from getpass import getpass
 from utils.utils import save_audio, transcribe
 
 with open('cfg/log.yaml') as f:

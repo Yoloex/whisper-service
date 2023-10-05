@@ -14,5 +14,5 @@ preprocessing:
   silence_top_db: 13
   frame_length: 12800
   hop_length: 1200
-  batchsize: 8
+  batchsize: 16
   float16_decode: False
