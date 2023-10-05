@@ -1,5 +1,5 @@
 with open('log/server.log') as f:
-    logs = f.readlines()[-32:]
+    logs = f.readlines()[-40:]
 
 total = 0
 sum = 0
