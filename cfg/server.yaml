@@ -2,7 +2,7 @@ server:
   port: 5000
   host: 0.0.0.0
   threaded: True
-  thread_count: 2
+  thread_count: 1
   model: base
 database:
   host: localhost
