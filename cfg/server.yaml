@@ -2,7 +2,7 @@ server:
   port: 5000
   host: 0.0.0.0
   threaded: True
-  thread_count: 16
+  thread_count: 4
   model: base
 database:
   host: localhost
@@ -14,5 +14,5 @@ preprocessing:
   silence_top_db: 13
   frame_length: 12800
   hop_length: 1200
-  batchsize: 2
+  batchsize: 8
   float16_decode: False
